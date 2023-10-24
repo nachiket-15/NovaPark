@@ -1,5 +1,4 @@
 
-```markdown
 # Parking Management System
 
 ## Overview
