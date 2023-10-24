@@ -14,7 +14,8 @@
                 <ul>
                   
                     <li><a href="/dashboard">DASHBOARD</a></li>
-                    <li><a href="/logout">LOGOUT</a></li>
+                    <!-- <li><a href="/parkedvehicles" >VIEW PARKED VEHICLES</a> </li> -->
+                    <li><a href="/index">HOME</a></li>
                 </ul>
             </div>
             <!-- MENU -->
@@ -25,7 +26,8 @@
         <div class="midtext">
            
             <img class="mid_parking_symbol" src="{{ url_for('static', filename='assets/img/parking_logo.png')}}">
-            <h1>PARKING AMOUNT DETAILS</h1>
+            <h1>NUMBER OF AVAILABLE SLOTS</h1>
+            <h1 class="digit-box">{{slots}}</h1>
 
         </div>
         
@@ -35,36 +37,6 @@
     </section>
 
     <div>
-    
-          <table class="table">
-            <thead>
-              <tr class="table-warning">
-                <th scope="col">Vehicle Type</th>
-                <th scope="col">Rate per hour</th>
-              </tr>
-            </thead>
-
-            <tbody>
-
-
-
-
-            <tr class="table-light">
-             
-                <td>Car</td>
-                <td>10 INR</td>
-             
-            </tr>
-
-            <tr class="table-light">
-             
-                <td>Bike</td>
-                <td>5 INR</td>
-             
-            </tr>
-        
-            </tbody>
-          </table>
          
     </div>
 

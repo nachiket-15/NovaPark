@@ -1,7 +1,7 @@
 #Parking management system done by 112103034 & 112103026 
 
 # REQUIREMENTS 
-from flask import Flask, render_template, request , session , redirect
+from flask import Flask, render_template, request , session , redirect,url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import datetime
@@ -67,9 +67,12 @@ else:
 
 db = SQLAlchemy(app) 
 
+
+
+
+
 # CLASSES 
 # CONTACTS SECTION
-
 class Contacts(db.Model):
     __tablename__ = 'Contacts' # set the table name
     Serial_num = db.Column(db.Integer, primary_key=True)
@@ -102,8 +105,6 @@ class AddVehicle(db.Model):
 
 
 
-
-
 @app.route("/")
 def home():
     return render_template("index.html")
@@ -112,10 +113,14 @@ def home():
 
 
 
+no_of_slots=15
 
-@app.route("/about")
-def about():
-    return render_template("about.html")
+
+
+@app.route("/pricing")
+def pricing():
+    # slots=no_of_slots
+    return render_template("pricing.html")
 
 
 
@@ -153,19 +158,18 @@ now = datetime.datetime.now()
 
 #SLOTS
 
-no_of_slots=5
-
-
 
 ##
 @app.route("/addvehicle", methods=['GET','POST'])
 def add_vehicle():
     vehiclename = ''  # Initialize vehiclename with a default value
 
+
+
     # check if the AddVehicle table is empty
     if not AddVehicle.query.first():
     # if it's empty, add an initial entry with 10 available parking slots
-        entry = AddVehicle(Vehicle_name='Test',Vehicle_num='Test', Phone_no='1234',Owner_name='Test' , Total_slots=no_of_slots ,Entry_time=0,Vehicle_type="CAR",Date=datetime.now()) 
+        entry = AddVehicle(Vehicle_name='Test',Vehicle_num='Test', Phone_no='1234',Owner_name='Test' , Total_slots=no_of_slots ,Entry_time=0,Vehicle_type="CAR",Date=datetime.datetime.now()) 
         db.session.add(entry)
         db.session.commit()
 
@@ -185,8 +189,13 @@ def add_vehicle():
             message = "Sorry! All slots are filled. No more slots available for parking."
             return render_template("addvehicle.html", message=message)
         
+    
         # Decrement the number of available parking slots and update the database
+    
         updated_slots = total_slots - 1
+        # no_of_slots_dummy=no_of_slots_dummy-1
+        
+
         AddVehicle.query.filter(AddVehicle.Total_slots == total_slots).update({"Total_slots": updated_slots})
         db.session.commit() 
 
@@ -197,10 +206,21 @@ def add_vehicle():
     # Fetch the updated number of available parking slots from the database
     total_slots = AddVehicle.query.with_entities(AddVehicle.Total_slots).first()[0]
 
-    message=f"Vehicle added successfully , Go and park at slot number {total_slots+1}"
+    message=f"\t\tVehicle added successfully"
     return render_template("addvehicle.html", Total_slots=total_slots,message=message)
 
 
+
+
+@app.route("/slotstatus")
+def about():
+    slots_1 = db.session.query(AddVehicle).count()
+    slots=(no_of_slots-slots_1)+1
+
+    if(slots<=0):
+        slots=0
+
+    return render_template("slotstatus.html",slots=slots)
 
 
 
@@ -226,14 +246,14 @@ def remove_vehicle():
         # Get the current time
         exit_time = int(request.form.get('exittime'))
         
-        # Calculate the duration of the vehicle's stay
+       
         entry_time =entry.Entry_time
         duration=(exit_time-entry_time)
         vtype=request.form.get('vtype')
         no_of_day=int(request.form.get('days'))
 
 
-        # Calculate the bill amount based on the duration of stay
+        
 
         if(vtype=="car"):
             rate_per_hour = 10
@@ -245,7 +265,7 @@ def remove_vehicle():
         
         bill_amount =(duration * rate_per_hour) + (day_charge * no_of_day)
 
-        # Increment the number of available parking slots and update the database
+        
         updated_slots = total_slots + 1
         AddVehicle.query.filter(AddVehicle.Total_slots == total_slots).update({"Total_slots": updated_slots})
         db.session.commit()
@@ -275,13 +295,16 @@ def remove_vehicle():
 
         # p.drawString() method is used to write header and details of parking bills on PDF canvas 
         # This method takes 3 arguments - x,y co-ordinates of where to place text on canvas & the actual text to write  
-        p.drawString(100, 700, "VEHICLE PARKING BILL")
+        p.drawString(100, 700, "VEHICLE PARKING RECEIPT")
         p.drawString(100, 670, f"Vehicle Number: {vehiclenum}")
         p.drawString(100, 640, f"Entry Time: {entry_time}:00 HRS")
         p.drawString(100, 610, f"Exit Time: {exit_time}:00 HRS")
         p.drawString(100, 580, f"Duration of Stay:{no_of_day} days {duration} hours")
         p.drawString(100, 550, f"Rate per hour: {rate_per_hour}")
         p.drawString(100, 520, f"Bill Amount: {bill_amount} INR")
+        p.drawString(200, 490, f"Scan the QR code to pay bill online")
+        img_file="/home/nachiket/Rppoop Project - Parking management system/static/assets/img/qr.jpeg"
+        p.drawImage(img_file,x=200,y=250,height=200,width=200)
 
         # Save the PDF bill to a buffer and send it as a response
         p.showPage()
@@ -294,7 +317,7 @@ def remove_vehicle():
         response = make_response(buffer.getvalue())
 
         #Responce objects headers are set to indicate that it contains a pdf file
-        response.headers["Content-Disposition"] = "attachment; filename=parkingbill.pdf"
+        response.headers["Content-Disposition"] = "attachment; filename=parking_bill.pdf"
         response.headers["Content-Type"] = "application/pdf"
 
         #Finally the responce object is returned from flask view function , sending pdf file to users browser for download
@@ -316,10 +339,10 @@ def contact():
         phone = request.form.get('phone')        
         message = request.form.get('message')  
 
-        entry = Contacts(Name=name, Email=email, Phone_no=phone, Message=message, Date=datetime.now()) 
+        entry = Contacts(Name=name, Email=email, Phone_no=phone, Message=message, Date=datetime.datetime.now()) 
         db.session.add(entry)
         db.session.commit()  
-        mail.send_message('New message from '+ name+'parking management system',sender=email,recipients=[params['gmail-user']],
+        mail.send_message('New message from '+ name+' - parking management system',sender=email,recipients=[params['gmail-user']],
                         body=message+"\n\nContact Number: "+phone)   
 
     return render_template("contact.html")
