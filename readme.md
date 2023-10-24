@@ -1,4 +1,3 @@
-I apologize for the confusion. It seems there might be a misunderstanding. The provided Markdown text is ready for you to copy and paste into a file named `README.md` in your project's root directory. Here's the complete content again:
 
 ```markdown
 # Parking Management System
@@ -51,14 +50,6 @@ This Parking Management System is developed by users with the following IDs: 112
 
 - The application uses a `config.json` file for configuration parameters such as database URI, mail server details, etc.
 
-## Database Configuration
-
-- The application is configured to use SQLite by default. If you need to switch to another database, update the `SQLALCHEMY_DATABASE_URI` in `config.json`.
-
-## Email Configuration
-
-- Configure the email settings in `config.json` to enable features such as sending messages and bills.
-
 ## Contributing
 
 Contributions are welcome! Follow these steps:
@@ -79,5 +70,3 @@ This project is licensed under the MIT License.
 
 Feel free to customize this README based on additional details about your project or any specific instructions for users.
 ```
-
-Please copy this text and paste it into a new file named `README.md` in your project's root directory.
