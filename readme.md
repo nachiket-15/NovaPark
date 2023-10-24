@@ -59,13 +59,8 @@ Contributions are welcome! Follow these steps:
 4. Push to the branch: `git push origin feature/new-feature`
 5. Submit a pull request.
 
-## License
-
-This project is licensed under the MIT License.
-
 ## Acknowledgments
 
 - The project uses Flask, Flask-SQLAlchemy, Flask-Mail, and ReportLab.
 
-Feel free to customize this README based on additional details about your project or any specific instructions for users.
-```
+
